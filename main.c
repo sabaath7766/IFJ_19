@@ -8,13 +8,13 @@
 #define POCET_KLICOVYCH_SLOV 15
 #define NEJVETSI_DELKA_SLOV 9
 
-// Uvozovnka nejde dat do uvozovek, tak jsem definoval její ascii hodnotu
+// Uvozovka nejde dat do uvozovek, tak jsem definoval její ascii hodnotu
 #define UVOZOVKA_ASCII 34
 
 typedef enum stavy {idle, identifikator, klicove_slovo, uvozovka1,
-uvozovka2, uvozovka_vyjimka_pro_lomitko, cislo, desetinne_cislo,
-zacatek_komentare_1,zacatek_komentare_2,zacatek_komentare_3,
-komentar, skoro_konec_komentare, konec_komentare, dvojbodka,
+uvozovka2, uvozovka_vyjimka_pro_lomitko, cislo, desetinne_cislo, desetinne_cislo2,
+desetinne_cislo_final, zacatek_komentare_1,zacatek_komentare_2,zacatek_komentare_3,
+radkovy_komentar, blokovy_komentar, konec_blokoveho_komentare, komentar, dvojbodka,
 
 // Stavy pro operátory
 jedno_rovna_se, jen_tilda, tecka
@@ -184,15 +184,17 @@ TToken dejToken()
       case identifikator:
         if(jeToPismeno(znak) || znak == '-' || znak >= '0' && znak <= '9'){
           stav = identifikator;
+          // TODO: Ukladani znaku do mezipameti
           // TODO: Zakomponovat funkci klicoveho slova
-        }else{
           // TODO: Vytvorit token
+        }else{
+
         }
 
       case cislo:
         if(znak >= '0' && znak <= '9'){
           stav = cislo;
-        }else if(znak == '.'){
+        }else if(znak == '.' || znak == 'e' || znak == 'E'){
           stav = desetinne_cislo;
         }else{
           vratZnak(znak); // jiny znak vratim
@@ -210,8 +212,10 @@ TToken dejToken()
         }
 
       case desetinne_cislo:
-        if(znak >= '0' && znak <= '9' || znak == '-' || znak == '+' || znak == 'e' || znak == 'E'){
-          stav = desetinne_cislo;
+        if(znak >= '0' && znak <= '9'){
+          stav = desetinne_cislo_final;
+        }else if(znak == '+' || znak == '-'){
+            stav = desetinne_cislo2;
         }else{
           vratZnak(znak); // jiny znak vratim
           // Vytvorim token
@@ -225,9 +229,14 @@ TToken dejToken()
             strcpy(token.typ, "Desetinne_cislo");
           }
 
-
           mamToken = true;
         }
+
+      case desetinne_cislo2:
+        //TODO
+
+      case desetinne_cislo_final:
+        //TODO
 
       case uvozovka1:
         /* TODO: Zakomponovat EOF do jednotlivych stavù */
@@ -236,7 +245,7 @@ TToken dejToken()
         }else if(znak == '/'){
           stav = uvozovka_vyjimka_pro_lomitko;
         }else{
-          stav = uvozovka1; // TODO: Nacitej jen znak do retezce mezipameti
+          stav = uvozovka1; //TODO: Nacitej jen znak do retezce mezipameti
         }
 
       case uvozovka2:
@@ -263,7 +272,7 @@ TToken dejToken()
           mamToken = true;
           free(pametHodnoty.prvniZnak); // Uvolním pamět znaků ze vstupu
         }else{
-          vratZnak(znak); // jiny znak vratim pro pristi steni
+          vratZnak(znak); // jiny znak vratim pro pristi cteni
 
           // vytvorim token =
           token.typ = (char*) malloc(sizeof(char)*(strlen("=") + 1));
@@ -285,11 +294,9 @@ TToken dejToken()
             strcpy(token.typ, "~=");
           }
           mamToken = true;
-
           free(pametHodnoty.prvniZnak); // Uvolním pamět znaků ze vstupu
         }else{
-          // Chyba, kterou bych mel nahlasit
-          // TODO: Vratit chybu na urovni lexikalni analyzy asi 1
+            exit(1);
         }
 
       case tecka:
@@ -303,10 +310,53 @@ TToken dejToken()
           }
           mamToken = true;
         }else{
-          /*TODO: Chyba. Špatny znak na vstupu*/
+            exit(1);
         }
 
-      // TODO: Dodelat stavy komentare z obrazku lexi. analyzy
+      case zacatek_komentare_1:
+        if(znak == '-'){
+            stav = zacatek_komentare_2;
+        }else{
+            exit(1);
+        }
+
+      case zacatek_komentare_2:
+        if(znak == '['){
+            stav = zacatek_komentare_3;
+        }else{
+            stav = radkovy_komentar;
+        }
+
+      case zacatek_komentare_3:
+        if(znak == '['){
+            stav = blokovy_komentar;
+        }else{
+            exit(1);
+        }
+
+      case radkovy_komentar:
+        if(znak == '/0'){
+            stav = komentar;
+        }else{
+            stav = radkovy_komentar;
+        }
+
+      case blokovy_komentar:
+        if(znak == ']'){
+            stav = konec_blokoveho_komentare;
+        }else{
+            stav = blokovy_komentar;
+        }
+
+      case konec_blokoveho_komentare:
+        if(znak == ']'){
+            stav = komentar;
+        }else{
+            stav = blokovy_komentar;
+        }
+
+      case komentar:
+        //TODO
 
       default: stav == idle; /* TODO: Asi bych mel poslat chybu*/
 
