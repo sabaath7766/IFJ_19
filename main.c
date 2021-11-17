@@ -149,6 +149,7 @@ TToken dejToken()
           if(token.typ != NULL){
             strcpy(token.typ, ":");
           }
+          free(pametHodnoty.prvniZnak); // Uvolním pamět znaků ze vstupu
           mamToken = true;
 
         }else if(znak == '='){
@@ -161,6 +162,7 @@ TToken dejToken()
           if(token.typ != NULL){
             token.typ[0] = znak;
             token.typ[1] = '\0';
+            free(pametHodnoty.prvniZnak); // Uvolním pamět znaků ze vstupu
           }
           mamToken = true;
         }else if(znak == '.'){
@@ -173,6 +175,7 @@ TToken dejToken()
           if(token.typ != NULL){
             strcpy(token.typ, "EOF");
           }
+          free(pametHodnoty.prvniZnak); // Uvolním pamět znaků ze vstupu
           mamToken = true;
         }else{
           /* TODO: Chyba predana lexikalni analyzou*/
@@ -181,10 +184,9 @@ TToken dejToken()
       case identifikator:
         if(jeToPismeno(znak) || znak == '-' || znak >= '0' && znak <= '9'){
           stav = identifikator;
-          // TODO: Ukladani znaku do mezipameti
           // TODO: Zakomponovat funkci klicoveho slova
         }else{
-
+          // TODO: Vytvorit token
         }
 
       case cislo:
@@ -196,6 +198,7 @@ TToken dejToken()
           vratZnak(znak); // jiny znak vratim
           // Vytvorim token
           token.hodnotaInt = atoi(pametHodnoty.prvniZnak);
+          free(pametHodnoty.prvniZnak); // Uvolním pamět znaků ze vstupu
           token.jeToInt = true;
           token.typ = (char*) malloc(sizeof(char)*(strlen("Cislo") + 1));
           // Dynamicky alokuji string
@@ -213,6 +216,7 @@ TToken dejToken()
           vratZnak(znak); // jiny znak vratim
           // Vytvorim token
           token.hodnotaDouble = atof(pametHodnoty.prvniZnak);
+          free(pametHodnoty.prvniZnak); // Uvolním pamět znaků ze vstupu
           token.jeToDouble = true;
           token.typ = (char*) malloc(sizeof(char)*(strlen("Desetinne_cislo") + 1));
           // Dynamicky alokuji string
@@ -220,6 +224,7 @@ TToken dejToken()
           if(token.typ != NULL){
             strcpy(token.typ, "Desetinne_cislo");
           }
+
 
           mamToken = true;
         }
@@ -231,12 +236,12 @@ TToken dejToken()
         }else if(znak == '/'){
           stav = uvozovka_vyjimka_pro_lomitko;
         }else{
-          stav = uvozovka1; //TODO: Nacitej jen znak do retezce mezipameti
+          stav = uvozovka1; // TODO: Nacitej jen znak do retezce mezipameti
         }
 
       case uvozovka2:
           // Vytvorim token
-          strcpy(token.AtributRetezec, pametHodnoty.prvniZnak);
+          token.AtributRetezec = pametHodnoty.prvniZnak;
           token.jeToRetezec = true;
           token.typ = (char*) malloc(sizeof(char)*(strlen("Retezec") + 1));
           // Dynamicky alokuji string
@@ -256,6 +261,7 @@ TToken dejToken()
             strcpy(token.typ, "==");
           }
           mamToken = true;
+          free(pametHodnoty.prvniZnak); // Uvolním pamět znaků ze vstupu
         }else{
           vratZnak(znak); // jiny znak vratim pro pristi steni
 
@@ -265,6 +271,7 @@ TToken dejToken()
           if(token.typ != NULL){
             strcpy(token.typ, "=");
           }
+          free(pametHodnoty.prvniZnak);
           mamToken = true;
 
         }
@@ -278,6 +285,8 @@ TToken dejToken()
             strcpy(token.typ, "~=");
           }
           mamToken = true;
+
+          free(pametHodnoty.prvniZnak); // Uvolním pamět znaků ze vstupu
         }else{
           // Chyba, kterou bych mel nahlasit
           // TODO: Vratit chybu na urovni lexikalni analyzy asi 1
@@ -296,6 +305,8 @@ TToken dejToken()
         }else{
           /*TODO: Chyba. Špatny znak na vstupu*/
         }
+
+      // TODO: Dodelat stavy komentare z obrazku lexi. analyzy
 
       default: stav == idle; /* TODO: Asi bych mel poslat chybu*/
 
