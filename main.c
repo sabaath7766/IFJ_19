@@ -30,6 +30,92 @@ void InicializaceTString(TString* retezec){
   retezec->pocetZnaku = 0;
 }
 
+//identefikator bude jako jednosmerne vazany seznam (nevime jak bude dlouhy)
+typedef struct idZnak{
+    char znak;
+    TIDptr dalsiZnak;
+    TIDptr predchoziZnak;
+} *TIDptr;
+//id
+typedef struct idList{
+    TIDptr prvniZnak;
+    TIDptr posledniZnak;
+    TIDptr aktivniZnak;
+    int pocetZnaku;
+}TID
+
+void idInit(TID* list){
+    list->prvniZnak=NULL;
+    list->posledniZnak=NULL;
+    list->aktivniZnak=NULL;
+    list->pocetZnaku=0;
+}
+//vlozeni znaku do "pole" id
+void idInsert(TID* list, char znak){
+    //deklarace noveho prvku
+    TIDptr IDznak = malloc(sizeof(*IDznak));
+    //kontrola mallocu
+    if(IDznak != NULL){
+         IDznak->znak; //vlozim data
+    IDznak->dalsiZnak = NULL; //posledni ukazuje zase na prvniho
+    IDznak->predchoziZnak = list->posledniZnak;
+
+    /*pokud neni seznam prazdny, tak je potreba nastavit,
+     aby predchozi prvek mel za naslednika novy prvek*/
+    if(list->posledniZnak != NULL){
+        list->posledniZnak->dalsiZnak = IDznak;
+    }else{
+     //novy prvek je zaroven i prvnim prvkem v seznamu
+    list->prvniZnak = IDznak;
+    }
+    list->posledniZnak = IDznak;
+    }
+    list->pocetZnaku = list->pocetZnaku+;
+}
+
+//nastaveni aktivity
+void firstID(TID* list){
+    list->aktivniZnak = list->prvniZnak;
+}
+//posouvani aktivity
+void nextID( TID *list ) {
+    //pokud je seznam aktivni
+    if (list->aktivniZnak != NULL){
+        if (list->aktivniZnak == list->posledniZnak){ //pokud jsme na poslednim prvku
+            list->aktivniZnak = NULL;
+        }else{
+            list->aktivniZnak = list->aktivniZnak->dalsiZnak; //predam aktivitu nasledujicimu
+        }
+    }
+}
+
+//ukonceni seznamu id
+void disposeID(TID* list) {
+
+    while(list->prvniZnak != NULL){
+        TIDptr *vymaz; //ukazatel na prvek
+    if(list->prvniZnak != NULL){ //pokud neni seznam prazdny
+        vymaz = list->prvniZnak; //ukazuju na prvni prvek
+        if(list->aktivniZnak == list->prvniZnak){ //pokud je ten prvek aktivni, rusim aktivitu
+            list->aktivniZnak = NULL;
+        }
+        if(list->prvniZnak == list->posledniZnak){ //posledni prvek
+            list->prvniZnak = NULL;
+            list->prvniZnak = NULL;
+        }
+        else{
+            list->prvniZnak = list->prvniZnak->dalsiZnak; //nastaveni noveho prvniho prvku
+            list->prvniZnak->predchoziZnak = NULL; //novy prvni prvek ukazuje na NULL
+        }
+        free(elemPtr);
+    }
+    }
+
+    list->aktivniZnak = NULL;
+    list->prvniZnak = NULL;
+    list->posledniZnak = NULL;
+}
+
 void pridatZnakTString(int znak, TString* retezec){
   // Zvetsi naalokovane misto pro retezec ci pro pro novy string ho naalokuje
   if(retezec->prvniZnak == NULL && retezec->pocetZnaku == 0){
@@ -124,6 +210,8 @@ TToken dejToken()
   TString pametHodnoty;
   InicializaceTString(&pametHodnoty);
   int znak;
+  TID id;
+  idInit(&id);
 
   /*TODO: Dat volání funkce vratZnak, kam patri - dvojbodka atd.*/
   /*TODO: Funkce na preskakovani bilych znaku*/
@@ -136,6 +224,7 @@ TToken dejToken()
       case idle:
         if(znak == '_' || jeToPismeno(znak)){
           stav = identifikator;
+          idInsert(&id,znak); //vloz do seznamu
         }else if(znak == '-'){
           stav = zacatek_komentare_1;
         }else if(znak >= '0' && znak <= '9'){
@@ -156,7 +245,7 @@ TToken dejToken()
           stav = jedno_rovna_se;
         }else if(znak == '~'){
           stav = jen_tilda;
-        }else if(znak == '#' || znak == '*' || znak == '+' || znak == '-'){
+        }else if(znak == '#' || znak == '*' || znak == '+'){
           token.typ = (char*) malloc(sizeof(char)*(2)); // 2 protoze znak a konec retezce
           // Dynamicky alokuji string
           if(token.typ != NULL){
@@ -179,16 +268,33 @@ TToken dejToken()
           mamToken = true;
         }else{
           /* TODO: Chyba predana lexikalni analyzou*/
+          exit(1);
         }
 
       case identifikator:
-        if(jeToPismeno(znak) || znak == '-' || znak >= '0' && znak <= '9'){
+        if(jeToPismeno(znak) || znak == '_' || znak >= '0' && znak <= '9'){
           stav = identifikator;
-          // TODO: Ukladani znaku do mezipameti
-          // TODO: Zakomponovat funkci klicoveho slova
-          // TODO: Vytvorit token
+          idInsert(&id, znak); //vloz do seznamu
         }else{
-
+            int delka = id->pocetZnaku; //delka id
+            token.typ = (char*) malloc(sizeof(char)*(3)); // 3 protoze 'i' 'd' a konec retezce
+            token.AtributRetezec (char*) malloc(sizeof(char)*((delka)+1); //delka id + konec retezce
+            firstID(&id); //prvni znak seznamu
+            for(int i=0;i<delka+1;id++){ //projdu cely seznam
+                token.AtributRetezec[i] = id->aktivniZnak->znak; //na pozici ulozim znak
+                nextID(&id); //dalsi znak
+            }
+            token.AtributRetezec[delka+1] = '\0'; //posledni znak
+          // Dynamicky alokuji string
+          if(token.typ != NULL){
+            token.typ[0] = 'i';
+            token.typ[1] = 'd';
+            token.typ[2] = '\0';
+            disposeID(&id); //uvolni seznam
+            free(pametHodnoty.prvniZnak); // Uvolním pamět znaků ze vstupu
+          }
+            vratZnak(znak);
+            mamToken = true;
         }
 
       case cislo:
@@ -317,7 +423,14 @@ TToken dejToken()
         if(znak == '-'){
             stav = zacatek_komentare_2;
         }else{
-            exit(1);
+            token.typ = (char*) malloc(sizeof(char)*(2)); // 2 protoze znak a konec retezce
+          // Dynamicky alokuji string
+          if(token.typ != NULL){
+            token.typ[0] = znak;
+            token.typ[1] = '\0';
+            free(pametHodnoty.prvniZnak); // Uvolním pamět znaků ze vstupu
+          }
+          mamToken = true;
         }
 
       case zacatek_komentare_2:
