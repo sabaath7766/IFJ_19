@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-// Vít Hrbácek & Kamil Hlavinka
+// Vít Hrbácek
 
 // Deklarace konstant pro funkci zda je to klicove slovo
 #define POCET_KLICOVYCH_SLOV 15
@@ -341,7 +341,11 @@ TToken dejToken()
         }
 
       case desetinne_cislo_final:
-        //TODO
+        if(znak >= '0' && znak <= '9'){
+          stav = desetinne_cislo_final;
+        }else{
+          //TODO ulozeni cisla do tokenu
+        }
 
       case uvozovka1:
         /* TODO: Zakomponovat EOF do jednotlivych stavù */
@@ -421,7 +425,7 @@ TToken dejToken()
       case zacatek_komentare_1:
         if(znak == '-'){
             stav = zacatek_komentare_2;
-        }else{
+        }else{ //je to minus
             token.typ = (char*) malloc(sizeof(char)*(2)); // 2 protoze znak a konec retezce
           // Dynamicky alokuji string
           if(token.typ != NULL){
@@ -468,7 +472,9 @@ TToken dejToken()
         }
 
       case komentar:
-        //TODO
+        //komentar nam neprinasi novou informaci a syntakticka analyza s nim taky nic nenadela, tak ho proste budeme ignorovat
+        stav = idle;
+        vratZnak(znak);
 
       default: stav == idle; /* TODO: Asi bych mel poslat chybu*/
 
