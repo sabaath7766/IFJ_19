@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-// Vít Hrbácek
+// Vít Hrbácek & Kamil Hlavinka
 
 // Deklarace konstant pro funkci zda je to klicove slovo
 #define POCET_KLICOVYCH_SLOV 15
@@ -280,20 +280,27 @@ TToken dejToken()
             token.typ = (char*) malloc(sizeof(char)*(3)); // 3 protoze 'i' 'd' a konec retezce
             token.AtributRetezec (char*) malloc(sizeof(char)*((delka)+1); //delka id + konec retezce
             firstID(&id); //prvni znak seznamu
-            for(int i=0;i<delka+1;id++){ //projdu cely seznam
+            for(int i=0;i<delka+1;id++){ //projdu cely seznam a ulozim znaky do pole AtributRetezec
                 token.AtributRetezec[i] = id->aktivniZnak->znak; //na pozici ulozim znak
                 nextID(&id); //dalsi znak
             }
             token.AtributRetezec[delka+1] = '\0'; //posledni znak
-          // Dynamicky alokuji string
-          if(token.typ != NULL){
-            token.typ[0] = 'i';
-            token.typ[1] = 'd';
-            token.typ[2] = '\0';
             disposeID(&id); //uvolni seznam
             free(pametHodnoty.prvniZnak); // Uvolním pamět znaků ze vstupu
-          }
+
             vratZnak(znak);
+            //klicova slova
+            if(jeRetezecKlicoveSlovo(&token.AtributRetezec)){
+                token.typ = (char*) malloc(sizeof(char)*(delka+1));
+                strcpy(token.typ, token.AtributRetezec);
+            }else{
+                token.jeToRetezec = true;
+                token.typ = (char*) malloc(sizeof(char)*(strlen("Identifikator") + 1));
+                if(token.typ != NULL){
+                    strcpy(token.typ, "Identifikator");
+                }
+            }
+
             mamToken = true;
         }
 
@@ -323,23 +330,15 @@ TToken dejToken()
         }else if(znak == '+' || znak == '-'){
             stav = desetinne_cislo2;
         }else{
-          vratZnak(znak); // jiny znak vratim
-          // Vytvorim token
-          token.hodnotaDouble = atof(pametHodnoty.prvniZnak);
-          free(pametHodnoty.prvniZnak); // Uvolním pamět znaků ze vstupu
-          token.jeToDouble = true;
-          token.typ = (char*) malloc(sizeof(char)*(strlen("Desetinne_cislo") + 1));
-          // Dynamicky alokuji string
-
-          if(token.typ != NULL){
-            strcpy(token.typ, "Desetinne_cislo");
-          }
-
-          mamToken = true;
+          exit(1);
         }
 
       case desetinne_cislo2:
-        //TODO
+        if(znak >= '0' && znak <= '9'){
+          stav = desetinne_cislo_final;
+        }else{
+          exit(1);
+        }
 
       case desetinne_cislo_final:
         //TODO
