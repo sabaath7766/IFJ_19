@@ -12,9 +12,9 @@
 #define UVOZOVKA_ASCII 34
 
 typedef enum stavy {idle, identifikator, klicove_slovo, uvozovka1,
-uvozovka2, uvozovka_vyjimka_pro_lomitko, zacatek_komentare_1,
-zacatek_komentare_2, zacatek_komentare_3, radkovy_komentar,
-blokovy_komentar, konec_blokoveho_komentare, komentar, dvojbodka,
+uvozovka2, uvozovka_vyjimka_pro_lomitko, zacatek_komentare_2, 
+zacatek_komentare_3, radkovy_komentar, blokovy_komentar, 
+konec_blokoveho_komentare, komentar, dvojbodka,
 jedno_rovna_se, jen_tilda, tecka,
 
 // Nově přidané stavy
