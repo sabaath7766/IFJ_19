@@ -1,8 +1,8 @@
 // ********************************************************************
 // Projekt:         Implementace překladače jazyka IFJ21.
-// Varianta:      19, I
-// Soubor:            scanner.c
-// Datum:            22.11.2021
+// Varianta:        19, I
+// Soubor:          scanner.c
+// Datum:           22.11.2021
 // Autoři:
 //                  Kamil Hlavinka            xhlavi20
 //                  Vít Hrbáček               xhrbac10
