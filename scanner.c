@@ -1,8 +1,17 @@
+// ********************************************************************
+// Project:         Implementace překladače jazyka IFJ21.
+// File:            scanner.c
+// Date:            22.11.2021
+// Authors:
+//                  Kamil Hlavinka            xhlavi20
+//                  Vít Hrbáček               xhrbac10
+//                  Tomáš Král                xkralt06
+//                  Pater Babic               xbabic13
+// ********************************************************************
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-// Vít Hrbácek a Kamil Hlavinka
 
 // Deklarace konstant pro funkci zda je to klicove slovo
 #define POCET_KLICOVYCH_SLOV 15
@@ -12,8 +21,8 @@
 #define UVOZOVKA_ASCII 34
 
 typedef enum stavy {idle, identifikator, klicove_slovo, uvozovka1,
-uvozovka2, uvozovka_vyjimka_pro_lomitko, zacatek_komentare_2, 
-zacatek_komentare_3, radkovy_komentar, blokovy_komentar, 
+uvozovka2, uvozovka_vyjimka_pro_lomitko, zacatek_komentare_2,
+zacatek_komentare_3, radkovy_komentar, blokovy_komentar,
 konec_blokoveho_komentare, komentar, dvojbodka,
 jedno_rovna_se, jen_tilda, tecka,
 
@@ -367,7 +376,7 @@ TToken dejToken()
           token.hodnotaDouble = atof(pametHodnoty.prvniZnak);
           token.jeToDouble = true;
           free(pametHodnoty.prvniZnak); // Uvolním pamět znaků ze vstupu
-          
+
           // Dynamicky alokuji string
           token.typ = (char*) malloc(sizeof(char)*(strlen("Desetinne_cislo") + 1));
           if(token.typ != NULL){
@@ -484,7 +493,7 @@ TToken dejToken()
           stav = zacatek_komentare_2;
         }else{
           vratZnak(znak);
-          
+
           // Dynamicky alokuji string
           token.typ = (char*) malloc(sizeof(char)*(strlen("-")+1));
           if(token.typ != NULL){
