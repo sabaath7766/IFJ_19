@@ -1,3 +1,17 @@
+
+   
+// ********************************************************************
+// Projekt:         Implementace překladače jazyka IFJ21.
+// Varianta:        19, I
+// Soubor:          symtable.h
+// Datum:           30.11.2021
+// Autoři:
+//                  Kamil Hlavinka            xhlavi20
+//                  Vít Hrbáček               xhrbac10
+//                  Tomáš Král                xkralt06
+//                  Pater Babic               xbabic13
+// ********************************************************************
+
 #ifndef SYMTABLE_H_INCLUDED
 #define SYMTABLE_H_INCLUDED
 
