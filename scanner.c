@@ -1,5 +1,6 @@
 // ********************************************************************
 // Project:         Implementace překladače jazyka IFJ21.
+// Assignment:      19, I
 // File:            scanner.c
 // Date:            22.11.2021
 // Authors:
