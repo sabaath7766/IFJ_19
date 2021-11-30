@@ -32,4 +32,4 @@ void zrusStrom (uzelStromu *uzel);
 void nahradNejvicPravym(uzelStromu cil, uzelStromu *uzel);
 
 
-#endif // SYMTABLE_H_INCLUDED
+#endif SYMTABLE_H_INCLUDED
