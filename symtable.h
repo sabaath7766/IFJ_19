@@ -1,5 +1,3 @@
-
-   
 // ********************************************************************
 // Projekt:         Implementace překladače jazyka IFJ21.
 // Varianta:        19, I
