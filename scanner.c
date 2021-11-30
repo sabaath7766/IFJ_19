@@ -1,9 +1,9 @@
 // ********************************************************************
-// Project:         Implementace překladače jazyka IFJ21.
-// Assignment:      19, I
-// File:            scanner.c
-// Date:            22.11.2021
-// Authors:
+// Projekt:         Implementace překladače jazyka IFJ21.
+// Varianta:      19, I
+// Soubor:            scanner.c
+// Datum:            22.11.2021
+// Autoři:
 //                  Kamil Hlavinka            xhlavi20
 //                  Vít Hrbáček               xhrbac10
 //                  Tomáš Král                xkralt06
